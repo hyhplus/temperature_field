@@ -12,7 +12,9 @@ from RGB_store import COLOR_RGB
 
 class Temperature:
     """
+    对象： Temperature
 
+    对象属性：
     温度： temperature
     通道： way
     时标： current_time 考虑作为类对象，无需用户输入
@@ -44,6 +46,7 @@ class Temperature:
         return current_time
 
     # 实例方法，处理温度，划分温度区间
+    # 临时方案：基于设定的温度值（基准值），上下浮动10个等级，即最多20个颜色梯度
     def temperature_handler(self):
         temperature = self.temperature
         top = self.t_max - self.t_base
@@ -98,15 +101,16 @@ class Temperature:
 # 测试方法
 if __name__ == '__main__':
 
+    # Temperature参数列表：(实际温度，通道，设定温度，最高温度，最低温度)
     t = Temperature(0, 1, 25, 100, -50)
     time_ = t.time_string()
     color = t.temperature_handler()
     color_rgb = t.color_change()
 
-    print(time_)
-    print(color)
-    print(color_rgb)
+    print("当前温度：", t.temperature)
+    print("当前时间：", time_)
+    print("颜色[16进制]：", color)
+    print("颜色[RGB]  ：", color_rgb)
 
     # t.get_temp_handler()
-
 
