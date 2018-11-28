@@ -10,6 +10,7 @@ import sys
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QColorDialog, QApplication
 
+from MyColor import temp_to_color, color
 from TemperatureChange import Temperature
 
 
@@ -19,10 +20,24 @@ class ColorTest(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        t = Temperature(-33, 1, 25, 100, -50)
+        t = Temperature(68, 1, 25, 100, -50)
         color_rgb = t.color_change()
         a, b, c = color_rgb[0], color_rgb[1], color_rgb[2]
         col = QColor(a, b, c)
+
+        t2 = Temperature(79, 2, 25, 100, -50)
+        color_rgb = t2.color_change()
+        a, b, c = color_rgb[0], color_rgb[1], color_rgb[2]
+        col_2 = QColor(a, b, c)
+
+        t3 = Temperature(100, 3, 25, 100, -50)
+        color_rgb = t3.color_change()
+        a, b, c = color_rgb[0], color_rgb[1], color_rgb[2]
+        col_3 = QColor(a, b, c)
+
+        color_rgb = temp_to_color(90, 25, 100, -50)
+        a, b, c = color_rgb[0], color_rgb[1], color_rgb[2]
+        col_4 = QColor(a, b, c)
 
         self.btn = QPushButton("改变颜色", self)    # 转换颜色按钮
         self.btn.move(20, 20)
@@ -34,7 +49,22 @@ class ColorTest(QWidget):
         self.frm.setStyleSheet("QWidget { background-color: %s }" % (col.name()))
         self.frm.setGeometry(130, 22, 100, 100)
 
-        self.setGeometry(300, 300, 250, 180)
+        # 显示颜色的QFrame背景框
+        self.frm_2 = QFrame(self)
+        self.frm_2.setStyleSheet("QWidget { background-color: %s }" % (col_2.name()))
+        self.frm_2.setGeometry(130, 122, 100, 100)
+
+        # 显示颜色的QFrame背景框
+        self.frm_3 = QFrame(self)
+        self.frm_3.setStyleSheet("QWidget { background-color: %s }" % (col_3.name()))
+        self.frm_3.setGeometry(230, 22, 100, 100)
+
+        # 显示颜色的QFrame背景框
+        self.frm_4 = QFrame(self)
+        self.frm_4.setStyleSheet("QWidget { background-color: %s }" % (col_4.name()))
+        self.frm_4.setGeometry(230, 122, 100, 100)
+
+        self.setGeometry(300, 300, 1000, 500)
         self.setWindowTitle("RGB转颜色")
         self.show()
 
