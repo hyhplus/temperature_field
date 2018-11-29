@@ -10,7 +10,7 @@ import sys
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QColorDialog, QApplication
 
-from MyColor import temp_to_color, color
+from MyColor import temp_to_color
 from TemperatureChange import Temperature
 
 
