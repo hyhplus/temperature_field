@@ -1,0 +1,22 @@
+
+
+sql:
+
+create database temp_col_sys default charset=utf8;
+
+use temp_col_sys;
+
+create table save_data (
+	id int NOT NULL AUTO_INCREMENT primary key,
+	data varchar(200)
+)default charset=utf8;
+
+
+insert into save_data (data) value("123414");
+
+
+create table set_data (
+	id int NOT NULL AUTO_INCREMENT primary key,
+	data varchar(200)
+)default charset=utf8;
+

@@ -17,7 +17,10 @@ class Ui_color_temp(object):
         color_temp.setToolTip("")
         self.widget = QtWidgets.QWidget(color_temp)
         self.widget.setGeometry(QtCore.QRect(80, 40, 681, 241))
-        # self.widget.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));")
+        # self.widget.setStyleSheet("background-color:
+        # qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0,
+        # stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));")
+
         # self.widget.setStyleSheet("background-color: rgb(85, 255, 255)")
         self.widget.setObjectName("widget")
 

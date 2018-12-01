@@ -15,6 +15,7 @@ class ColorMain(QWidget, Ui_color_temp):
         super(ColorMain, self).__init__()
         self.setupUi(self)
         self.change_color()
+        self.frm = ""
 
     def change_color(self):
         color_rgb = temp_to_color(90, 25, 100, -50)
@@ -29,7 +30,8 @@ class ColorMain(QWidget, Ui_color_temp):
         # self.widget = QWidget(self)
         # self.widget.setGeometry(QtCore.QRect(80, 40, 681, 241))
         self.widget.setStyleSheet(
-            "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 118, 0, 255), stop:1 rgba(208, 222, 255, 255));")
+            "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, "
+            "stop:0 rgba(255, 118, 0, 255), stop:1 rgba(208, 222, 255, 255));")
         # self.widget.setObjectName("widget")
 
 
