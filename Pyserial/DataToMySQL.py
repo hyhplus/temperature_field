@@ -21,11 +21,11 @@ def save_data(data_, type_, count):
             cursor.execute("insert into set_data (data) value(%s);", data_)
         elif type_ == "set":
             cursor.execute("select data from set_data where id = %s;", count)
-            data = cursor.fetchone()
-            print(data)
-            print(type(data))
+            data_ = cursor.fetchone()
+            print(data_)
+            print(type(data_))
 
-            return data[0]
+            return data_[0]
 
     except Exception as e:
         db.rollback()               # 事务回滚
