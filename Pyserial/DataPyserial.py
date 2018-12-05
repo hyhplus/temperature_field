@@ -12,7 +12,7 @@ import serial.tools.list_ports
 from PyQt5 import QtGui
 from PyQt5.QtCore import QTimer
 
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
 
 import DataToMySQL
 from Pyserial.COM_Connect import Ui_Form
@@ -38,7 +38,11 @@ class MainWindow(QMainWindow, Ui_Form):
         self.d_data = ""
         self.create_items()
 
-        self.timer = QTimer(self)
+        self.timer = ""
+        self.c = True
+
+        self.port_list_new = list(serial.tools.list_ports.comports())
+        self.port_c = self.port_list_new     # 启动时检测
 
     @classmethod
     def create_serial(cls):
@@ -47,26 +51,77 @@ class MainWindow(QMainWindow, Ui_Form):
         # cls.set_data = DataToMySQL.save_data("", "set", count=2)
         # print(cls.set_data)
 
+    def port_check_timer(self):
+        """ 实时检测串口 """
+        port_list = list(serial.tools.list_ports.comports())
+        com_list = []
+        for port in port_list:
+            com_list.append(port[0])
+
+        if self.port_list_new > port_list:
+            QMessageBox.warning(self, "warning", "有串口拔出")
+            if self.my_serial.isOpen():
+                if self.comboBox.currentText() not in com_list:
+                    self.port_close()
+
+            self.port_check()
+
+        if self.port_list_new < port_list:
+            self.port_list_new = port_list
+            QMessageBox.about(self, "new serial", "有串口接入")
+
+            # if not self.my_serial.isOpen():
+            self.port_check()
+
+            # if self.my_serial.isOpen():
+            #     self.port_check()
+
+        self.port_c = port_list
+
+        if not self.port_c:         # 仅限启动程序识别串口时调用
+            self.port_c = [""]
+            QMessageBox.warning(self, "warning", "无串口")
+
     def port_check(self):
         """ 检测串口，自动识别 """
         com_list = []
         port_list = list(serial.tools.list_ports.comports())
-        self.comboBox.clear()
+
         for port in port_list:
             com_list.append(port[0])
-            self.comboBox.addItem(port[0])
 
-        if len(com_list) == 0:
-            self.pushButton.setText("no serial")
+        temp = self.comboBox.currentText()
+        if self.my_serial.isOpen() and temp in com_list and self.port_list_new < port_list:
+            pass
         else:
-            self.pushButton.setText("connect")
+            self.comboBox.clear()
+
+            for i in com_list:
+                self.comboBox.addItem(i)
+                self.pushButton.setText("connect")
+
+            if len(com_list) == 0:
+                pass
+                # self.pushButton.setText("no serial")
+                # QMessageBox.warning(self, "warning", "请检测串口是否正确插入")
+            else:
+                self.pushButton.setText("connect")
+
+        self.port_list_new = port_list
 
     def port_open(self):
         """ 打开串口 """
+        port_list = list(serial.tools.list_ports.comports())
+        com_list = []
+        for port in port_list:
+            com_list.append(port[0])
+
         if self.comboBox.currentText() == "":
             self.port_check()
+            if self.comboBox.currentText() == "":
+                QMessageBox.warning(self, "warning", "请检测串口是否正确插入")
 
-        else:
+        elif self.comboBox.currentText() in com_list:
             self.my_serial.port = self.comboBox.currentText()
             self.my_serial.baudrate = int(self.comboBox_2.currentText())
 
@@ -81,8 +136,12 @@ class MainWindow(QMainWindow, Ui_Form):
                 # self.write_data(self.text_edit_data(), is_hex=False)
                 # self.write_data(self.text_edit_data, is_hex=False)  # data="FA 01 A0 01 D8 FC"
 
+        else:
+            QMessageBox.warning(self, "warning", "请检测串口是否正确插入")
+
     def port_close(self):
         """ 关闭串口 """
+        self.port_check()
         self.alive = False
         if self.my_serial.isOpen():
             self.my_serial.close()
@@ -95,6 +154,7 @@ class MainWindow(QMainWindow, Ui_Form):
         """ 写数据到串口 """
         data_ = self.textEdit.toPlainText()
         data = bytearray.fromhex(data_)              # 16进制字符串转为字节数组
+        print(data)
         if self.alive:
             if self.my_serial.isOpen():
                 if is_hex:
@@ -149,13 +209,20 @@ class MainWindow(QMainWindow, Ui_Form):
     def create_items(self):
         """ 开启定时器 """
         self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.port_check)
         self.timer.timeout.connect(self.show_time)
+        self.timer.timeout.connect(self.port_check_timer)
         self.timer.start(100)
+
+        # self.timer_port = QTimer(self)
+        # self.timer_port.timeout.connect(self.set_c)
+        # self.timer_port.start(2000)
 
     def show_time(self):
         """ 显示时间 """
-        self.label_6.setText(time.strftime("%B %d, %H:%M:%S", time.localtime()))
+        self.label_6.setText(time.strftime("%Y %m %d, %H:%M:%S", time.localtime()))
+
+    def set_c(self):
+        self.c = True
 
 
 if __name__ == "__main__":
