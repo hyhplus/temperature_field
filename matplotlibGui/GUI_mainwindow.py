@@ -1,21 +1,18 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# from PyQt5.QtCore import *
-# from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 import sys
 import numpy as np
-
-
 import matplotlib
+# import matplotlib.pyplot as plt
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from PyQt5.QtWidgets import *
 
 from Ui_mainwindow import Ui_Dialog
 
 matplotlib.use("Qt5Agg")  # 声明使用QT5
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-# import matplotlib.pyplot as plt
 
 
 # 创建一个matplotlib图形绘制类

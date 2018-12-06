@@ -68,7 +68,7 @@ class MainWindow(QMainWindow, Ui_Form):
 
         if self.port_list_new < port_list:
             self.port_list_new = port_list
-            QMessageBox.about(self, "new serial", "有串口接入")
+            # QMessageBox.about(self, "new serial", "有串口接入")
 
             # if not self.my_serial.isOpen():
             self.port_check()
@@ -153,20 +153,34 @@ class MainWindow(QMainWindow, Ui_Form):
     def write_data(self, is_hex=False):
         """ 写数据到串口 """
         data_ = self.textEdit.toPlainText()
-        data = bytearray.fromhex(data_)              # 16进制字符串转为字节数组
-        print(data)
-        if self.alive:
-            if self.my_serial.isOpen():
-                if is_hex:
-                    data = binascii.unhexlify(data)
-                    print(data)
-            self.my_serial.write(data)
+        # print(data_)
+        try:
+            data = bytearray.fromhex(data_)              # 16进制字符串转为字节数组
             print(data)
 
-        # 开启接收数据线程
-        self.serial_thread = threading.Thread(target=self.receive_data)
-        self.serial_thread.setDaemon(True)
-        self.serial_thread.start()
+            if self.alive:
+                # if self.my_serial.isOpen():
+                #     if is_hex:
+                #         data = binascii.unhexlify(data)
+                #         print(data)
+                self.my_serial.write(data)
+                # print(data)
+                if is_hex:
+                    pass
+        except Exception as e:
+            print(e)
+
+        try:
+            # 开启接收数据线程
+            self.serial_thread = threading.Thread(target=self.receive_data)
+            self.serial_thread.setDaemon(True)
+            self.serial_thread.start()
+
+            if not self.my_serial.isOpen():
+                self.serial_thread.join()
+
+        except Exception as e:
+            print(e)
 
     def receive_data(self):
         """ 串口接收数据，并输出到接收区 """
@@ -179,7 +193,6 @@ class MainWindow(QMainWindow, Ui_Form):
                 size = self.my_serial.inWaiting()
                 # rec_data = ''
                 # rec_data = rec_data.encode("utf-8")
-                # print(type(size))
 
                 if size:
                     # self.my_serial.read(size).replace(binascii.unhexlify("00"), "")
@@ -189,10 +202,10 @@ class MainWindow(QMainWindow, Ui_Form):
 
                     data = str(binascii.b2a_hex(self.read_data))[2:-1].upper()
 
-                    print(data)
+                    # print(data)
                     p = re.compile('.{1,2}')
                     data = " ".join(p.findall(data))
-                    print(type(data))
+                    # print(type(data))
 
                     # 把数据保存到数据库中
                     DataToMySQL.save_data(data, "save", count=0)
@@ -201,10 +214,15 @@ class MainWindow(QMainWindow, Ui_Form):
                     self.textBrowser.append(data)
                     self.textBrowser.moveCursor(QtGui.QTextCursor.End)
                     self.my_serial.flushInput()
+                    self.read_data = b""
 
                     num += 1
+
+                    break
+
             except Exception as e:
                 logging.error(e)
+                time.sleep(1000)
 
     def create_items(self):
         """ 开启定时器 """
